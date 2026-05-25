@@ -52,7 +52,7 @@ DBS exports often include a few preamble rows before the real header. The parser
 
 ## Categories
 
-The current rules cover common Singapore/DBS descriptions:
+The current rules cover common SG and DBS descriptions:
 
 - Groceries
 - Dining & Drinks
