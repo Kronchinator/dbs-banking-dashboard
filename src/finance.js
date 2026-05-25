@@ -107,10 +107,33 @@ export function parseDbsCsv(csvText) {
 }
 
 export function merchantName(description) {
-  return compactDescription(description)
-    .replace(/^(NETS|VISA|MASTERCARD|PAYNOW|FAST|GIRO)\s+/i, '')
-    .trim()
-    .toUpperCase();
+  const compact = compactDescription(description);
+  const upper = compact.toUpperCase();
+
+  if (/^TRF\s+TOP-?UP\s+TO\s+PAYLAH!?/i.test(compact)) return 'PayLah! Top-up';
+  if (/^TRF\s+FT[A-Z0-9]+\s+\d{3}-\d{5}-\d:IB(?:\s+UEN)?$/i.test(compact)) return 'Bank Transfer';
+  if (/^TRF\s+/i.test(compact)) return 'Bank Transfer';
+
+  let merchant = upper
+    .replace(/^(NETS|VISA|MASTERCARD|PAYNOW|FAST|GIRO|BAT)\s+/i, '')
+    .replace(/\s+\d{1,2}[A-Z]{3}\s+.*$/i, '')
+    .replace(/\s+\d{4}-\d{4}-\d{4}-\d{4}.*$/i, '')
+    .replace(/\s+G\.CO\/.*$/i, '')
+    .replace(/\s+(SI|SGP|SG|USA|DUBL|AD)\s*$/i, '')
+    .trim();
+
+  const knownCleanup = [
+    [/^SINGAPORE PAINCARE CEN\b.*/i, 'SINGAPORE PAINCARE CEN'],
+    [/^GOOGLE CLASH ROYALE\b.*/i, 'GOOGLE CLASH ROYALE'],
+    [/^STEAMGAMES\.COM\b.*/i, 'STEAMGAMES.COM'],
+    [/^PAYPAL \*EPIC GAMES\b.*/i, 'EPIC GAMES'],
+    [/^ADOBE\b.*/i, 'ADOBE'],
+  ];
+  for (const [pattern, replacement] of knownCleanup) {
+    if (pattern.test(merchant)) return replacement;
+  }
+
+  return merchant;
 }
 
 export function round2(value) {

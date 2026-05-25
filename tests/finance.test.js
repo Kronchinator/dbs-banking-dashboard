@@ -3,6 +3,7 @@ import {
   aggregateTransactions,
   categorizeTransaction,
   generateInsights,
+  merchantName,
   parseDbsCsv,
 } from '../src/finance.js';
 
@@ -48,6 +49,16 @@ describe('categorizeTransaction', () => {
     expect(categorizeTransaction({ description: 'BAT SINGAPORE PAINCARE CEN' })).toBe('Healthcare');
     expect(categorizeTransaction({ description: 'TRF TOP-UP TO PAYLAH!' })).toBe('Transfers');
     expect(categorizeTransaction({ description: 'BAT Shein Shein SGP' })).toBe('Shopping');
+  });
+});
+
+describe('merchantName', () => {
+  it('groups DBS transfer reference IDs into readable merchant buckets', () => {
+    expect(merchantName('TRF FT260409MB42106677 404-31272-3:IB')).toBe('Bank Transfer');
+    expect(merchantName('TRF TOP-UP TO PAYLAH!')).toBe('PayLah! Top-up');
+    expect(merchantName('TRF FT260109MB23396071 404-31272-3:IB UEN')).toBe('Bank Transfer');
+    expect(merchantName('BAT SINGAPORE PAINCARE CEN SI SGP 12MAY 4628-4500-8241-6547')).toBe('SINGAPORE PAINCARE CEN');
+    expect(merchantName('BAT Google Clash Royale g.co/helppay# SGP 10APR 4628-4500-8241-6547')).toBe('GOOGLE CLASH ROYALE');
   });
 });
 
