@@ -30,6 +30,7 @@ import { analyzeDbsCsv, aggregateTransactions, generateInsights } from './financ
 import './styles.css';
 
 const sampleTransactions = [
+  // Demo rows only. They keep the page useful before upload without shipping any real statement data.
   { id: '1', date: '2026-05-01', description: 'NETS SUPERMARKET FAIRPRICE', merchant: 'SUPERMARKET FAIRPRICE', currency: 'SGD', debit: 43.2, credit: 0, amount: -43.2, type: 'expense', category: 'Groceries' },
   { id: '2', date: '2026-05-02', description: 'GRAB RIDES SINGAPORE', merchant: 'GRAB RIDES SINGAPORE', currency: 'SGD', debit: 18.8, credit: 0, amount: -18.8, type: 'expense', category: 'Transport' },
   { id: '3', date: '2026-05-03', description: 'STARBUCKS COFFEE', merchant: 'STARBUCKS COFFEE', currency: 'SGD', debit: 7.1, credit: 0, amount: -7.1, type: 'expense', category: 'Dining & Drinks' },
@@ -97,6 +98,7 @@ function App() {
   const topMerchants = summary.topMerchants.slice(0, 7);
 
   async function handleFile(event) {
+    // file.text() keeps the whole flow inside the browser. No upload endpoint, no quiet leak.
     const file = event.target.files?.[0];
     if (!file) return;
     try {
@@ -113,6 +115,7 @@ function App() {
   }
 
   function exportCleanCsv() {
+    // Export only the rows the user is looking at. It makes the filtered table portable.
     const headers = ['date', 'description', 'category', 'type', 'debit', 'credit', 'amount'];
     const rows = filteredTransactions.map((tx) => headers.map((header) => JSON.stringify(tx[header] ?? '')).join(','));
     const blob = new Blob([[headers.join(','), ...rows].join('\n')], { type: 'text/csv;charset=utf-8' });

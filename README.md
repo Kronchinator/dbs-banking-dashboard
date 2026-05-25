@@ -85,6 +85,28 @@ npm test
 npm run build
 ```
 
+## Deploy to Cloudflare Pages
+
+This is a Vite static app, so Cloudflare only needs the built `dist` folder.
+
+Fast path in the Cloudflare dashboard:
+
+```text
+Framework preset: Vite
+Build command: npm run build
+Build output directory: dist
+Root directory: /
+Node version: 22
+```
+
+If you deploy from your terminal instead:
+
+```bash
+npm run deploy:cloudflare
+```
+
+More notes are in [`docs/cloudflare.md`](docs/cloudflare.md).
+
 ## Tech stack
 
 - React
@@ -99,6 +121,9 @@ npm run build
 src/finance.js        parser, categorizer, aggregates, insights
 src/main.jsx          dashboard UI
 src/styles.css        styling
+public/_headers       small Cloudflare security headers
+public/_redirects     static fallback for direct URLs
+docs/cloudflare.md    Cloudflare Pages setup notes
 tests/finance.test.js parser and analytics tests
 ```
 

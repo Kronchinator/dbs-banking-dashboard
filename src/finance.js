@@ -12,6 +12,8 @@ const HEADER_COLUMNS = [
 ];
 
 const CATEGORY_RULES = [
+  // Keep these boring on purpose. Regex rules are easier to audit than a black box,
+  // and nobody wants their bank export sent away just to classify coffee.
   ['Income', /salary|paynow transfer salary|giro salary|payroll/i],
   ['Groceries', /fairprice|cold storage|sheng siong|giant|ntuc|don don donki|redmart|supermarket/i],
   ['Dining & Drinks', /starbucks|coffee|kopi|mcdonald|kfc|burger|restaurant|food|toast box|yakun|grabfood|deliveroo|foodpanda|hawker|cafe|subway/i],
@@ -49,6 +51,8 @@ export function normalizeDate(value) {
 }
 
 function compactDescription(value) {
+  // DBS descriptions can carry long reference numbers that make charts unreadable.
+  // Strip the obvious noise, but leave the merchant text intact.
   return String(value || '')
     .replace(/\s+/g, ' ')
     .replace(/\b\d{8,}\b/g, '')
@@ -64,6 +68,8 @@ export function categorizeTransaction(transaction) {
 }
 
 function findHeaderIndex(rows) {
+  // DBS puts account notes before the transaction table in some exports.
+  // The header row is the first row with the expected column names.
   return rows.findIndex((row) => {
     const cells = row.map((cell) => String(cell || '').trim());
     return HEADER_COLUMNS.every((column) => cells.includes(column));
@@ -110,6 +116,8 @@ export function merchantName(description) {
   const compact = compactDescription(description);
   const upper = compact.toUpperCase();
 
+  // FAST and PayLah rows often look like machine IDs, not merchants.
+  // Group them before the generic cleanup turns the labels into nonsense.
   if (/^TRF\s+TOP-?UP\s+TO\s+PAYLAH!?/i.test(compact)) return 'PayLah! Top-up';
   if (/^TRF\s+FT[A-Z0-9]+\s+\d{3}-\d{5}-\d:IB(?:\s+UEN)?$/i.test(compact)) return 'Bank Transfer';
   if (/^TRF\s+/i.test(compact)) return 'Bank Transfer';
@@ -153,6 +161,7 @@ export function aggregateTransactions(transactions) {
   const savingsRate = totalIncome ? round2((netCashflow / totalIncome) * 100) : 0;
 
   const categoryMap = new Map();
+  // Totals are built from debits, not signed amounts, so the chart labels stay simple.
   for (const tx of expenses) {
     const current = categoryMap.get(tx.category) || { category: tx.category, amount: 0, count: 0, share: 0 };
     current.amount = round2(current.amount + tx.debit);
@@ -199,6 +208,8 @@ export function aggregateTransactions(transactions) {
 }
 
 export function generateInsights(summary) {
+  // These are intentionally blunt rules. The app should explain the obvious first,
+  // before pretending it has discovered hidden financial wisdom in a CSV file.
   const insights = [];
   if (summary.savingsRate >= 20) {
     insights.push({ severity: 'positive', title: 'Strong savings rate', body: `You kept ${summary.savingsRate}% of recorded income. Preserve this before optimizing small leaks.` });

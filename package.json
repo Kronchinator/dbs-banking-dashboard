@@ -7,7 +7,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "vitest run"
+    "test": "vitest run",
+    "deploy:cloudflare": "npm run build && npx wrangler pages deploy dist --project-name dbs-banking-dashboard"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
