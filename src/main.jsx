@@ -131,14 +131,13 @@ function App() {
     <main>
       <header className="hero">
         <nav>
-          <div className="brand"><Landmark size={22} /> DBS Money Map</div>
-          <div className="privacy-pill"><ShieldCheck size={16} /> Local CSV processing</div>
+          <div className="brand">Finance Tracker Dashboard</div>
         </nav>
         <section className="hero-grid">
           <div>
             <p className="eyebrow">Personal banking dashboard</p>
-            <h1>See where your money is going. Then make it behave.</h1>
-            <p className="hero-copy">Upload your DBS transaction CSV and get instant cashflow, category breakdowns, merchant patterns, and AI-style spending advice. No bank API. No ceremony. Just the ledger confessing.</p>
+            <h1>Track your spending!</h1>
+            <p className="hero-copy">Upload your DBS transaction CSV and get insights! NO FINANCIAL DATA IS PROCESSED OR SENT ANYWHERE. EVERYTHING IS HANDLED LOCALLY.</p>
             <div className="upload-row">
               <label className="upload-button">
                 <FileUp size={18} /> Upload DBS CSV
